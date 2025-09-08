@@ -1,1 +1,27 @@
+import pandas as pd
+#put your code here
+df = pd.read_csv('https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv')
+df.head(7)
+df.info()
+df.describe()
 
+median_age=df['Age'].median()
+df['Age']=df['Age'].fillna(median_age)
+
+def get_age_group(age):
+    if age < 18:
+        return "Ребенок"
+    elif age<=65:
+      return 'Взрослый'
+    else:
+      return 'Пожилой'
+
+df['AgeGroup'] = df['Age'].apply(get_age_group)  
+print(df[['Age','AgeGroup']].head()) 
+
+print(df.groupby('Sex')['Survived'].mean())
+print(df.groupby('Pclass')['Survived'].mean())
+print(df.pivot_table(values='Survived', index='Sex', columns='Pclass',aggfunc='mean')*100)
+
+print(df[(df['Age'] <18) & (df['Pclass'] == 3) & (df['Survived'] == 1)].sort_values('Age', ascending=False)[['Name', 'Age']])
+print(df[(df['Sex'] =='male') & (df['Survived'] == 0)].sort_values('Age', ascending=False).head(1)[['Name', 'Age']])
